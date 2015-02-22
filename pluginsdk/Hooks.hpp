@@ -26,7 +26,7 @@
 #include <string>
 #include <utility>
 
-#include <dcapi/PluginDefs.h>
+#include <PluginSDK/PluginDefs.h>
 
 namespace dcapi {
 

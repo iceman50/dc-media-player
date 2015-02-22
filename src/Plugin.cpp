@@ -20,13 +20,13 @@
 #include "Plugin.h"
 #include "MediaPlayers.h"
 
-#include <pluginsdk/Config.h>
-#include <pluginsdk/Core.h>
-#include <pluginsdk/Hooks.h>
-#include <pluginsdk/Hubs.h>
-#include <pluginsdk/Logger.h>
-#include <pluginsdk/UI.h>
-#include <pluginsdk/Util.h>
+#include <pluginsdk/Config.hpp>
+#include <pluginsdk/Core.hpp>
+#include <pluginsdk/Hooks.hpp>
+#include <pluginsdk/Hubs.hpp>
+#include <pluginsdk/Logger.hpp>
+#include <pluginsdk/UI.hpp>
+#include <pluginsdk/Util.hpp>
 
 using dcapi::Config;
 using dcapi::Core;

@@ -19,7 +19,7 @@
 #include "stdafx.h"
 #include "MediaUtil.h"
 
-#include <pluginsdk/Util.h>
+#include <pluginsdk/Util.hpp>
 
 #include <time.h>
 

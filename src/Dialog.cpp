@@ -21,9 +21,9 @@
 #include "Plugin.h"
 #include "resource.h"
 
-#include <pluginsdk/Config.h>
-#include <pluginsdk/Core.h>
-#include <pluginsdk/Util.h>
+#include <pluginsdk/Config.hpp>
+#include <pluginsdk/Core.hpp>
+#include <pluginsdk/Util.hpp>
 
 using dcapi::Config;
 using dcapi::Core;

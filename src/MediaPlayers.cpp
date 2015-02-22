@@ -20,8 +20,8 @@
 #include "MediaUtil.h"
 #include "Winamp.h"
 
-#include <pluginsdk/Config.h>
-#include <pluginsdk/Util.h>
+#include <pluginsdk/Config.hpp>
+#include <pluginsdk/Util.hpp>
 
 #include <algorithm>
 
