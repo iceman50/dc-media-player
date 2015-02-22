@@ -179,17 +179,17 @@
     <ClCompile Include="..\..\src\stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\pluginsdk\Config.h" />
-    <ClInclude Include="..\..\pluginsdk\Connections.h" />
-    <ClInclude Include="..\..\pluginsdk\Core.h" />
-    <ClInclude Include="..\..\pluginsdk\Hooks.h" />
-    <ClInclude Include="..\..\pluginsdk\Hubs.h" />
-    <ClInclude Include="..\..\pluginsdk\Logger.h" />
+    <ClInclude Include="..\..\pluginsdk\Config.hpp" />
+    <ClInclude Include="..\..\pluginsdk\Connections.hpp" />
+    <ClInclude Include="..\..\pluginsdk\Core.hpp" />
+    <ClInclude Include="..\..\pluginsdk\Hooks.hpp" />
+    <ClInclude Include="..\..\pluginsdk\Hubs.hpp" />
+    <ClInclude Include="..\..\pluginsdk\Logger.hpp" />
     <ClInclude Include="..\..\pluginsdk\PluginDefs.h" />
-    <ClInclude Include="..\..\pluginsdk\Queue.h" />
-    <ClInclude Include="..\..\pluginsdk\Tagger.h" />
-    <ClInclude Include="..\..\pluginsdk\UI.h" />
-    <ClInclude Include="..\..\pluginsdk\Util.h" />
+    <ClInclude Include="..\..\pluginsdk\Queue.hpp" />
+    <ClInclude Include="..\..\pluginsdk\Tagger.hpp" />
+    <ClInclude Include="..\..\pluginsdk\UI.hpp" />
+    <ClInclude Include="..\..\pluginsdk\Util.hpp" />
     <ClInclude Include="..\..\src\Dialog.h" />
     <ClInclude Include="..\..\src\MediaPlayers.h" />
     <ClInclude Include="..\..\src\MediaUtil.h" />
