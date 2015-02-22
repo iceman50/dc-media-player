@@ -1,0 +1,8 @@
+<MetaData>
+	<PluginInformation Name="MyPlugin" Description="Sample plugin" Author="John Doe" Website="www.example.org" UUID="{71E7C1A9-CA4B-4671-B58C-67876EDB4517}" Version="1" ApiVersion="8" />
+	<Settings>
+		<Setting Name="AssemblyName" Description="Name of the assembly to load." Value="MyPlugin" DefaultValue="MyPlugin" DataType="String" />
+		<Setting Name="ClassName" Description="Name of the class (including namespace)." Value="DCPlugin.SamplePlugin.MyPlugin" DefaultValue="DCPlugin.SamplePlugin.MyPlugin" DataType="String" />
+		<Setting Name="AppDomain" Description="Use the plugin in its own application domain. A new application domain allow unloading (and reloading) at runtime but may sacrifice performance. Value of '0' will NOT USE a new application domain, value of '1' will USE a new application domain." Value="0" DefaultValue="0" DataType="Byte" ValidValues="0|1" />
+	</Settings>
+</MetaData>

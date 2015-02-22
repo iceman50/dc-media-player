@@ -1,0 +1,20 @@
+Edit Libraries/PythonPlugin/version.h with the correct plugin information there. This information will be used on installation.
+
+Edit Libraries/PythonPlugin/PythonPlugin_27.vcxproj to use the correct Python version (unless it is already supplied in this package). Change any corresponding paths for Python as well.
+
+Compile Libraries/PythonPlugin/PythonPlugin_27.vcxproj in Release (does not work in Debug).
+
+Edit Examples/Python-Skeleton/info_27.xml with the correct plugin information there. This information will be used during runtime.
+
+The file Examples/Python-Skeleton/MyPlugin.py is the Python plugin: edit this accordingly. If another file name shall be used, change the File reference in the info.xml.
+
+Copy the following files to a separate directory "MyPlugin" (or run "copy_27.bat"):
+	Libraries/PythonPlugin/Release/PythonPlugin_27.dll
+	Libraries/PyPlugin.DataTypes/* (all files)
+	Examples/Python-Skeleton/info_27.xml
+	Examples/Python-Skeleton/MyPlugin.xml
+	C:/Windows/SysWOW64/Python27.dll
+
+Zip the files to "MyPlugin.zip" and then change the name of the file to "MyPlugin.dcext".
+
+There are different Python versions already supplied in this package. If you add support for a different version, be sure to add all of the aforementioned files, too, since it will greatly help you and others.

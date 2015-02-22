@@ -1,0 +1,58 @@
+1. General
+
+The DC plugin interface allows C or C++ programmers to write plugins for applications such as DC++ to extend or refine information within the system. The interface is written in C with a C++ interface available as well. Other languages (or frameworks) that can use the C/C++ interface can use the framework as is, but they have obvious limitations of the integration with C. 
+
+The DC .NET plugin is meant as a way to bridge the gap between C/C++ and the .NET world. The plugin uses C++/CLI to marshal C++ code to .NET code. The .NET library (included) is written in C#, but can be used with other .NET languages. 
+
+A developer will implement a plugin in their respective .NET language and then reference the .NET library.
+
+2. Design
+
+There are two components that comprise the .NET plugin; the C++/CLI plugin and the .NET (C#) library. 
+
+2.1. General
+
+2.2. C++/CLI plugin
+The C++/CLI plugin is a plugin that uses .NET and will load and forward data to a .NET plugin.
+
+The C++/CLI is built with /clr, thereby allowing .NET (and enabling C++/CLI from basic C++) code to run. The plugin will load a binary (as specified in the settings) and forward data to it appropriately. 
+
+The plugin requires that implementations use the INETPlugin interface (see below).
+
+Developers can decide whether they want the plugin to be used in the context of a new application domain in .NET. An application domain can be seen as a closed environement for binaries. The CLR will set up an application domain for the C++/CLI plugin and any other binaries loaded from it. If the developer decide to run their .NET plugin in a new application context, it means that the plugin can be unloaded (and reloaded) at runtime. Running in an application domain will however yield a performance hit because the CLR must marshal data between the two application domains.
+
+The plugin uses a base class, CPluginBase, to set up basic things that all plugins will need. In fact, the class is built in such a way that it can be reused by another C++ plugin project. This base class is extended by CPluginHelper that will do forwarding of all hooks etc to the .NET plugin.
+
+The CMarshalling class is doing all marshalling between C++ and .NET and it is where all conversions should take place. 
+
+The sink, CNETPluginSink, is the class that .NET plugins will call to (although they will se a INETPluginSink). Each input parameter is validated to be non-null and an appropriate exception is thrown if they are.
+
+2.3. .NET library
+The .NET library has three key parts: the INETPlugin class, the INETPluginSink and other supporting classes.
+
+The INETPlugin is used by the C++/CLI for calling functions etc and it is the interface that all .NET plugins MUST follow. The class NETPluginBase is an implementation of that class and can be used by other plugins at will. The base class allows plugin developers to not have to implement everything on their own.
+
+The INETPluginSink can be used to call the corresponding C/C++ functions. Plugins are initialized with a sink and need not (should not) create one themselves.
+
+The INETPlugin and INETPluginSink interfaces are structured around the C++ Plugin SDK's structure with breaking up content into respective section. The .NET library does not use different classes for each type of content. Rather, the .NET library uses #regions to distinguish different types of functions as well as an appropriate naming scheme.
+
+Container classes contain an "InternalPointer" variable: this should never be modified. The container classes should never be created from the .NET world. Rather, they should be requested via the Sink and those variables should then be used. This is how the C/C++ Plugin SDK is built and the .NET library simply forwards this design.
+
+3. License
+The GNU GPL v.2. license is used.
+
+4. IDE addons
+4.1. Visual Studio
+4.1. Wizards
+
+To add wizards to Visual Studio for .NET, copy the following files:
+ dc-plugin-sdk\Addons\VisualStudio\2012\Wizards\Addons\NETDCPluginWizard.ico
+ dc-plugin-sdk\Addons\VisualStudio\2012\Wizards\Addons\NETDCPluginWizard.vsdir
+ dc-plugin-sdk\Addons\VisualStudio\2012\Wizards\Addons\NETDCPluginWizard.vsz
+
+To:
+ C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC#\CSharpProjects
+
+Change path in the file NETDCPluginWizard.vsz to the path of the DC Plugin SDK.
+
+
