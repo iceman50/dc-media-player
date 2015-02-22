@@ -45,10 +45,12 @@ public:
 
 	static string formatSeconds(uint64_t aSec, bool supressHours = false) {
 		char buf[64];
-		if (!supressHours)
-			snprintf(buf, sizeof(buf), "%01lu:%02d:%02d", (unsigned long)(aSec / (60*60)), (int)((aSec / 60) % 60), (int)(aSec % 60));
-		else
-			snprintf(buf, sizeof(buf), "%02d:%02d", (int)(aSec / 60), (int)(aSec % 60));	
+
+		if (!supressHours) {
+			snprintf(buf, sizeof(buf), "%01lu:%02d:%02d", (unsigned long)(aSec / (60 * 60)), (int)((aSec / 60) % 60), (int)(aSec % 60));
+		} else {
+			snprintf(buf, sizeof(buf), "%02d:%02d", (int)(aSec / 60), (int)(aSec % 60));
+		}
 		return buf;
 	}
 	

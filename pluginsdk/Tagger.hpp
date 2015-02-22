@@ -21,7 +21,7 @@
 #ifndef PLUGINSDK_TAGGER_H
 #define PLUGINSDK_TAGGER_H
 
-#include <dcapi/PluginDefs.h>
+#include <PluginSDK/PluginDefs.h>
 
 namespace dcapi {
 

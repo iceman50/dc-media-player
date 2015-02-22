@@ -49,7 +49,7 @@ string fixedftime(const string& format, struct tm* t) {
 		sm[tmp] = &buf[0]; 
 	}
 
-	for(StringMapIter i = sm.begin(); i != sm.end(); ++i) {
+	for(auto i = sm.begin(); i != sm.end(); ++i) {
 		for(string::size_type j = ret.find(i->first); j != string::npos; j = ret.find(i->first, j)) {
 			ret.replace(j, i->first.length(), i->second);
 			j += i->second.length() - i->first.length();
