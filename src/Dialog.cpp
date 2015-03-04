@@ -79,7 +79,7 @@ void Dialog::saveConfig() {
 }
 
 void Dialog::helpBox(helpType type) {
-	auto helpF = [](string helpStr) {
+	auto helpF = [](const string& helpStr) {
 		::MessageBox(0, Util::toT(helpStr).c_str(),
 			_T("MediaPlayer Help"), MB_OK);
 	};
@@ -131,7 +131,7 @@ INT_PTR CALLBACK Dialog::DialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM)
  	case WM_CLOSE:
  	case WM_DESTROY:
 		{
-			if(dlg != nullptr) dlg->close();
+			if (dlg != nullptr) { dlg->close(); }
 			break;
 		}
 	}
