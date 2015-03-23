@@ -14,7 +14,7 @@
 ./doc/latex
 ./packaging/info_generated.xml
 ./projects/make/build*
-./projects/vs2013/Debug
+./projects/vs2013/Debug*
 ./projects/vs2013/ipch
-./projects/vs2013/Release
+./projects/vs2013/Release*
 ./projects/vs2013/x64

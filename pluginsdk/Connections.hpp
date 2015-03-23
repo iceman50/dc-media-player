@@ -21,7 +21,7 @@
 #ifndef PLUGINSDK_CONNECTIONS_H
 #define PLUGINSDK_CONNECTIONS_H
 
-#include <dcapi/PluginDefs.h>
+#include <PluginSDK/PluginDefs.h>
 
 namespace dcapi {
 

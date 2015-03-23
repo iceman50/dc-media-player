@@ -162,7 +162,7 @@ string MediaPlayers::getMPCSpam(bool& status) {
 	return result;
 }
 
-const string& MediaPlayers::WAHelp() {
+const string MediaPlayers::WAHelp() {
 	const string buf =
 		"Winamp media broadcast\r\n"
 		"- %[version]	Numerical Version (ex: 2.91)\r\n"
@@ -181,7 +181,7 @@ const string& MediaPlayers::WAHelp() {
 	return buf;
 }
 
-const string& MediaPlayers::MPCHelp() {
+const string MediaPlayers::MPCHelp() {
 	const string buf =
 		//TODO Finish when the parameters are all added
 		"MPC broadcast\r\n"

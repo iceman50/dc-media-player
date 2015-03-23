@@ -21,7 +21,7 @@
 #ifndef PLUGINSDK_QUEUE_H
 #define PLUGINSDK_QUEUE_H
 
-#include <dcapi/PluginDefs.h>
+#include <PluginSDK/PluginDefs.h>
 
 namespace dcapi {
 

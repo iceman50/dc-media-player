@@ -107,7 +107,7 @@ void Dialog::close() {
 	}
 }
 
-INT_PTR CALLBACK Dialog::DialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM) {
+INT_PTR CALLBACK Dialog::DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM) {
 	switch(uMsg) {
 	case WM_INITDIALOG:
 		{
@@ -116,11 +116,11 @@ INT_PTR CALLBACK Dialog::DialogProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM)
 			dlg->iconLg = (HICON)::LoadImage(0, icoPath.c_str(), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR | LR_LOADFROMFILE);
 
 			try {
-				::SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)dlg->iconSm);
-				::SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)dlg->iconLg);
+				::SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)dlg->iconSm);
+				::SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)dlg->iconLg);
 			} catch(...) { }
 
-			dlg->hwnd = hwnd;
+			dlg->hwnd = hWnd;
 			return dlg->init();
 		}
 	case WM_COMMAND:
