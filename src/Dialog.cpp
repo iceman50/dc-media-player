@@ -33,7 +33,9 @@ HINSTANCE Dialog::instance;
 Dialog* dlg = nullptr;
 
 Dialog::Dialog() :
-	hwnd(nullptr)
+	hwnd(nullptr),
+	iconLg(nullptr),
+	iconSm(nullptr)
 {
 	dlg = this;
 	
@@ -71,7 +73,7 @@ void Dialog::saveConfig() {
 	string waFormat = Util::fromT(waDest);
 
 	if(waFormat.empty() || waFormat.size() <= 8) { // the magic size here is 8 because %[title] is the 'smallest' useful param
-		const string defStr = "NP > %[title] [ %[elapsed] of %[length] ]";
+		const auto& defStr = "NP > %[title] [ %[elapsed] of %[length] ]";
 		Config::setConfig("WAFormat", defStr); 
 	} else {
 		Config::setConfig("WAFormat", waFormat);
@@ -111,7 +113,7 @@ INT_PTR CALLBACK Dialog::DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM)
 	switch(uMsg) {
 	case WM_INITDIALOG:
 		{
-			const auto icoPath = Util::toT(Config::getInstallPath() + "MediaPlayer.ico");
+			const auto& icoPath = Util::toT(Config::getInstallPath() + "MediaPlayer.ico");
 			dlg->iconSm = (HICON)::LoadImage(0, icoPath.c_str(), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR | LR_LOADFROMFILE);
 			dlg->iconLg = (HICON)::LoadImage(0, icoPath.c_str(), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR | LR_LOADFROMFILE);
 

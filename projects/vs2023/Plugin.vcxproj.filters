@@ -83,36 +83,6 @@
     <ClInclude Include="..\..\src\version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\pluginsdk\Config.h">
-      <Filter>Header Files\Plugin SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\pluginsdk\Connections.h">
-      <Filter>Header Files\Plugin SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\pluginsdk\Core.h">
-      <Filter>Header Files\Plugin SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\pluginsdk\Hooks.h">
-      <Filter>Header Files\Plugin SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\pluginsdk\Hubs.h">
-      <Filter>Header Files\Plugin SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\pluginsdk\Logger.h">
-      <Filter>Header Files\Plugin SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\pluginsdk\Queue.h">
-      <Filter>Header Files\Plugin SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\pluginsdk\UI.h">
-      <Filter>Header Files\Plugin SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\pluginsdk\Util.h">
-      <Filter>Header Files\Plugin SDK</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\pluginsdk\Tagger.h">
-      <Filter>Header Files\Plugin SDK</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\pluginsdk\PluginDefs.h">
       <Filter>Header Files\Plugin SDK</Filter>
     </ClInclude>
@@ -126,6 +96,36 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Winamp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pluginsdk\Config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pluginsdk\Connections.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pluginsdk\Core.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pluginsdk\Hooks.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pluginsdk\Hubs.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pluginsdk\Logger.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pluginsdk\Queue.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pluginsdk\Tagger.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pluginsdk\UI.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\pluginsdk\Util.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

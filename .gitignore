@@ -9,6 +9,7 @@
 *.suo
 *.tar.gz
 *.vcxproj.user
+./.vs/
 ./doc/build.bat
 ./doc/html
 ./doc/latex
