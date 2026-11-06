@@ -7,7 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "winresrc.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -32,7 +32,7 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include ""afxres.h""\r\n"
+    "#include ""winresrc.h""\r\n"
     "\0"
 END
 
@@ -51,8 +51,8 @@ END
 //
 
 VERSION_INFO VERSIONINFO
- FILEVERSION 0,0,3,0
- PRODUCTVERSION 0,0,3,0
+ FILEVERSION 0,0,5,0
+ PRODUCTVERSION 0,0,5,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "http://dcplusplus.sourceforge.net"
             VALUE "FileDescription", "Media player plugin for DC++"
-            VALUE "FileVersion", "0, 0, 3, 0"
+            VALUE "FileVersion", "0, 0, 5, 0"
             VALUE "InternalName", "MediaPlayer plugin"
-            VALUE "LegalCopyright", "Copyright (C) 2013 iceman50"
+            VALUE "LegalCopyright", "Copyright (C) 2013-2026 iceman50"
             VALUE "OriginalFilename", "MediaPlayer.dll"
             VALUE "ProductName", "Media player plugin for DC++"
-            VALUE "ProductVersion", "0, 0, 3, 0"
+            VALUE "ProductVersion", "0, 0, 5, 0"
         END
     END
     BLOCK "VarFileInfo"

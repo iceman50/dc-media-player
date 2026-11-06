@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iceman50
+ * Copyright (C) 2013-2026 iceman50
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@
 #define PLUGIN_DESC "Plugin for sending now playing info to chat"
 
 /* Version of the plugin (note: not API version) */
-#define PLUGIN_VERSION 0.4
+#define PLUGIN_VERSION 0.5
 
 /* Plugin website, set to "N/A" if none */
-#define PLUGIN_WEB "NA"
+#define PLUGIN_WEB "https://github.com/iceman50/dc-media-player"
 
 #endif

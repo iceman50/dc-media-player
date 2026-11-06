@@ -1,1 +1,81 @@
-See the doc/ directory for documentation.
+Media player plugin for DC++ Experimental
+========================================
+
+Version 0.5 targets the Windows API 8 plugin interface used by
+DCPlusPlus-No-MDI 0.8842. The plugin stays in its own repository; no DC++
+source changes are required. The bundled legacy SDK is ABI-compatible with
+the interfaces used here; the integration test compiles against the actual
+DC++ checkout's dcpp/plugins/PluginDefs.h to check the DLL boundary.
+
+Build, test and package (PowerShell, MinGW-w64 x64)
+------------------------------------------------
+Put CMake 3.25+, g++, windres and mingw32-make on PATH, then run here:
+
+    cmake -S . -B build/mingw-release -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DDCPP_SOURCE_DIR=../DCPlusPlus-No-MDI
+    cmake --build build/mingw-release --parallel
+    ctest --test-dir build/mingw-release --output-on-failure --timeout 30
+    cmake --build build/mingw-release --target package_dcext
+
+Outputs:
+    build/mingw-release/MediaPlayer-x64.dll
+    build/mingw-release/MediaPlayer-0.5-x64-Release.dcext
+
+The package includes info.xml, the DLL, and MediaPlayer.ico. It contains
+only the selected architecture, with no missing PDB references. The MinGW
+runtime is linked statically so the installed plugin needs no MinGW DLLs.
+
+For another checkout, pass its path as DCPP_SOURCE_DIR. To build without
+the integration test or a DC++ source checkout, use -DBUILD_TESTING=OFF.
+CMake also supports MSVC and 32-bit toolchains, but the validated build is
+MinGW-w64 GCC 13.2.0 x64. The DLL architecture must match DC++.
+The old projects/ files are retained; CMake is the maintained build path.
+
+Install and use
+---------------
+Open DC++'s plugin settings (the Plugins toolbar button), choose Add, and
+select the .dcext above. Accept the package installation dialog. If an older
+copy of this plugin is installed, disable it and restart DC++ before updating.
+The existing plugin GUID and saved formats are retained.
+
+Use the "Configure media broadcasts" plugin command to edit the Winamp
+format. An empty format restores the default. Supported commands in hub
+chat and private messages:
+
+    /w, /wa, /winamp     Broadcast Winamp's current title and playback info.
+    /mpc                Broadcast the Media Player Classic window title.
+    /help plugins       Display this plugin's command help.
+
+Winamp must expose the "Winamp v1.x" window class; MPC must expose
+"MediaPlayerClassicW". MPC variants with other window classes and other
+players are not supported. The format can start with "/me " for an action
+message. Winamp placeholders are listed in the configuration dialog's Help.
+MPC uses its stored MPCFormat setting, defaulting to "NP > %[title]".
+Missing-player errors stay local, with a notification in private chat.
+
+Compatibility changes
+---------------------
+- Repeatable Unicode x64 DLL and .dcext build without an MFC dependency.
+- Fully initialized metadata and failed-load/duplicate-load cleanup.
+- Configuration owned by the DC++ window, reusable while open, and safe
+  destruction on close, disable and uninstall.
+- Bounded format/title buffers and support for short formats such as %[title].
+- Preserve Unicode/plain Winamp titles when playlist decorations are absent.
+- Honor the MPC format and handle failed PM commands locally.
+- Initialize missing settings while preserving existing formats.
+
+Validation
+----------
+The DLL integration test builds against DCPlusPlus-No-MDI's host header
+and provides local substitutes for the used host interfaces and player
+windows. It checks the exported entry point, metadata, rejected loads,
+load/install/unload/reload, hook/menu cleanup, hub/PM commands, /me, absent
+players, Unicode and long titles, format persistence, dialog ownership,
+and dialog closure during unload. No network traffic is sent. Close Winamp
+and MPC before running it; the test refuses to use live player windows.
+
+Validated against DC++ Experimental 0.8842 (checkout 270b0a5), Windows x64,
+MinGW-w64 GCC 13.2.0. Real Winamp/MPC playback in a running DC++ session has
+not been manually tested. The package is built but is not automatically
+installed into a user's DC++ profile.
+
+Historical SDK and package-format documentation is under Doc/.

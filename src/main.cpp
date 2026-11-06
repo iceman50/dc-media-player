@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2013 Jacek Sieka, arnetheduck on gmail point com
+ * Copyright (C) 2012-2026 Jacek Sieka, arnetheduck on gmail point com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@ extern "C" {
 
 // Plugin loader
 DCEXP DCMAIN DCAPI pluginInit(MetaDataPtr info) {
+	if(!info) return nullptr;
+	*info = MetaData{};
 	info->name = PLUGIN_NAME;
 	info->author = PLUGIN_AUTHOR;
 	info->description = PLUGIN_DESC;

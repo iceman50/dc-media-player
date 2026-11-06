@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iceman50
+ * Copyright (C) 2013-2026 iceman50
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,8 +59,8 @@ string MediaPlayers::getWinampSpam(bool& status) {
 				break;
 			case 3: params["state"] = "paused";
 		}
-		TCHAR titleBuffer[2048];
-		int buffLength = sizeof(titleBuffer);
+		TCHAR titleBuffer[2048] = {};
+		int buffLength = static_cast<int>(sizeof(titleBuffer) / sizeof(*titleBuffer));
 		::GetWindowText(hwndWinamp, titleBuffer, buffLength);
 		string title = Util::fromT(titleBuffer);
 		params["rawtitle"] = title;
@@ -74,13 +74,16 @@ string MediaPlayers::getWinampSpam(bool& status) {
 				title = title.substr(starpos, title.size());
 			}
 		}
-		// fix the title if scrolling is on, so we need to put the asterisks at the end of it
-		string titletmp = title.substr(title.find("***") + 2, title.size());
-		title = titletmp + title.substr(0, title.size() - titletmp.size());
-		title = title.substr(title.find('.') + 2, title.size());
-		if (title.rfind('-') != string::npos) {
-			params["title"] = title.substr(0, title.rfind('-') - 1);
-		}
+		// Only remove decorations that are actually present. npos arithmetic
+		// used to drop the first characters of plain and Unicode titles.
+		const auto stars = title.find("***");
+		if(stars != string::npos) title = title.substr(stars + 3) + title.substr(0, stars);
+		const auto number = title.find(". ");
+		if(number != string::npos && number > 0 &&
+			title.find_first_not_of("0123456789") == number) title.erase(0, number + 2);
+		const auto suffix = title.rfind(" - Winamp");
+		if(suffix != string::npos) title.erase(suffix);
+		params["title"] = title;
 		int curPos = ::SendMessage(hwndWinamp, WM_USER, 0, IPC_GETOUTPUTTIME);
 		int length = ::SendMessage(hwndWinamp, WM_USER, 1, IPC_GETOUTPUTTIME);
 		if (curPos == -1) {
@@ -139,7 +142,7 @@ string MediaPlayers::getWinampSpam(bool& status) {
 
 string MediaPlayers::getMPCSpam(bool& status) {
 	string result;
-	TCHAR wTitle[1024];
+	TCHAR wTitle[1024] = {};
 	//Unicode only ...
 	HWND hwnd = ::FindWindow(_T("MediaPlayerClassicW"), NULL);
 
@@ -147,14 +150,8 @@ string MediaPlayers::getMPCSpam(bool& status) {
 		StringMap params;
 		::GetWindowText(hwnd, (LPWSTR)wTitle, 1024);
 		string title = Util::fromT(wTitle);
-		if(!title.find(" - Media Player Classic")) { 
-			status = true;
-			result = "Can't retrieve MPC pattern"; 
-		}
-		//TODO add the rest of the param formatting
 		params["title"] = title;
-		//result = MediaUtil::formatParams(Config::getConfig("MPCFormat"), params);
-		result = title;
+		result = MediaUtil::formatParams(Config::getConfig("MPCFormat"), params);
 	} else {
 		status = true;
 		result = "MPC is not running";

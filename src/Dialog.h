@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iceman50
+ * Copyright (C) 2013-2026 iceman50
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ public:
 	Dialog();
 	~Dialog();
 
-	void create();
+	void create(HWND parent = nullptr);
 	void close();
 	bool exist() { return hwnd; }
 

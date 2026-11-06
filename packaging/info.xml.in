@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dcext>
+  <UUID>{aa73bba2-d8ca-47a2-8dc2-760fc3d26b53}</UUID>
+  <Name>Media player plugin</Name>
+  <Version>@PROJECT_VERSION@</Version>
+  <ApiVersion>8</ApiVersion>
+  <Author>iceman50</Author>
+  <Description>Plugin for sending now playing info to chat</Description>
+  <Website>https://github.com/iceman50/dc-media-player</Website>
+  <Plugin Platform="pe-@PLUGIN_ARCH@">MediaPlayer-@PLUGIN_ARCH@.dll</Plugin>
+  <Files><File>MediaPlayer.ico</File></Files>
+</dcext>

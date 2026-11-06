@@ -20,17 +20,15 @@ to this directory and zip them; rename that .zip to .dcext and you are done!
 
 <dcext>
 	<UUID>{aa73bba2-d8ca-47a2-8dc2-760fc3d26b53}</UUID>
-	<Name>MediaPlayer plugin</Name>
-	<Version>0.3</Version>
+	<Name>Media player plugin</Name>
+	<Version>0.5</Version>
 	<ApiVersion>8</ApiVersion>
 	<Author>iceman50</Author>
 	<Description>Send media player spam to chat</Description>
-	<Website>http://dcplusplus.sourceforge.net/</Website>
+	<Website>https://github.com/iceman50/dc-media-player</Website>
 	<Plugin Platform="pe-x64">MediaPlayer-x64.dll</Plugin>
 	<Plugin Platform="pe-x86">MediaPlayer-x86.dll</Plugin>
 	<Files>
-		<File Platform="pe-x64">MediaPlayer-x64.pdb</File>
-		<File Platform="pe-x86">MediaPlayer-x86.pdb</File>
 		<File>MediaPlayer.ico</File>
 	</Files>
 </dcext>

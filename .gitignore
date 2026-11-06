@@ -19,3 +19,5 @@
 ./projects/vs2013/ipch
 ./projects/vs2013/Release*
 ./projects/vs2013/x64
+
+/build/

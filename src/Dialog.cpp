@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iceman50
+ * Copyright (C) 2013-2026 iceman50
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +33,11 @@ HINSTANCE Dialog::instance;
 Dialog* dlg = nullptr;
 
 Dialog::Dialog() :
-	hwnd(nullptr),
+	iconSm(nullptr),
 	iconLg(nullptr),
-	iconSm(nullptr)
+	hwnd(nullptr)
 {
 	dlg = this;
-	
-	::SendMessage(GetDlgItem(hwnd, IDC_WINAMPCFG), EM_LIMITTEXT, static_cast<WPARAM>(2048), 0);
 }
 
 Dialog::~Dialog() {
@@ -48,31 +46,27 @@ Dialog::~Dialog() {
 	dlg = nullptr;
 }
 
-void Dialog::create() {
+void Dialog::create(HWND parent) {
 	if(hwnd) {
-		::MessageBox(0, Util::toT("The MediaPlayer plugin hasn't been properly shut down; you better restart " + Core::appName).c_str(),
-			_T("Error creating the MediaPlayer plugin's dialog"), MB_OK);
+		::ShowWindow(hwnd, SW_RESTORE);
+		::SetForegroundWindow(hwnd);
 		return;
 	}
-
-	::CreateDialog(instance, MAKEINTRESOURCE(IDD_MEDIAPLAYERDLG), 0, DialogProc);
-
+	if(!parent) parent = ::GetActiveWindow();
+	::CreateDialog(instance, MAKEINTRESOURCE(IDD_MEDIAPLAYERDLG), parent, DialogProc);
 	if(!hwnd) {
-		TCHAR buf[256];
+		TCHAR buf[256] = {};
 		::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, 0, GetLastError(), 0, buf, 256, 0);
-		::MessageBox(0, buf, _T("Error creating the MediaPlayer plugin's dialog"), MB_OK);
+		::MessageBox(parent, buf, _T("Error creating the MediaPlayer plugin's dialog"), MB_OK);
 	}
 }
 
 void Dialog::saveConfig() {
-	TCHAR waDest[2048];
-
-	auto waHandle = ::GetDlgItem(hwnd, IDC_WINAMPCFG);
-	int waEditLength = ::GetWindowTextLength(waHandle);
-	::GetWindowText(waHandle, waDest, (waEditLength) + 1);
+	TCHAR waDest[2048] = {};
+	::GetDlgItemText(hwnd, IDC_WINAMPCFG, waDest, static_cast<int>(sizeof(waDest) / sizeof(*waDest)));
 	string waFormat = Util::fromT(waDest);
 
-	if(waFormat.empty() || waFormat.size() <= 8) { // the magic size here is 8 because %[title] is the 'smallest' useful param
+	if(waFormat.empty()) {
 		const auto& defStr = "NP > %[title] [ %[elapsed] of %[length] ]";
 		Config::setConfig("WAFormat", defStr); 
 	} else {
@@ -101,11 +95,9 @@ void Dialog::helpBox(helpType type) {
 
 void Dialog::close() {
 	if(hwnd) {
-		::DestroyWindow(hwnd);
+		const auto window = hwnd;
 		hwnd = nullptr;
-
-		::DestroyIcon(dlg->iconSm);
-		::DestroyIcon(dlg->iconLg);
+		::DestroyWindow(window);
 	}
 }
 
@@ -131,16 +123,22 @@ INT_PTR CALLBACK Dialog::DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM)
 			break;
 		}
  	case WM_CLOSE:
- 	case WM_DESTROY:
 		{
 			if (dlg != nullptr) { dlg->close(); }
 			break;
 		}
 	}
+	if(uMsg == WM_NCDESTROY && dlg) {
+		dlg->hwnd = nullptr;
+		if(dlg->iconSm) ::DestroyIcon(dlg->iconSm);
+		if(dlg->iconLg) ::DestroyIcon(dlg->iconLg);
+		dlg->iconSm = dlg->iconLg = nullptr;
+	}
 	return FALSE;
 }
 
 BOOL Dialog::init() {
+	::SendDlgItemMessage(hwnd, IDC_WINAMPCFG, EM_LIMITTEXT, 2047, 0);
 	::SetDlgItemText(hwnd, IDC_WINAMPCFG,  Util::toT(Config::getConfig("WAFormat")).c_str());
 
 	return TRUE;
@@ -152,6 +150,7 @@ void Dialog::command(WPARAM wParam) {
 		{
 			saveConfig();
 			close();
+			break;
 		}
 	case IDCANCEL:
 		{

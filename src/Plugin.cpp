@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 iceman50
+ * Copyright (C) 2013-2026 iceman50
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,16 +49,22 @@ Plugin::~Plugin() {
 	}
 }
 
-Plugin* instance;
+Plugin* instance = nullptr;
 
-Bool DCAPI Plugin::main(PluginState state, DCCorePtr core, dcptr_t) {
+Bool DCAPI Plugin::main(PluginState state, DCCorePtr core, dcptr_t parent) {
 	switch(state) {
 	case ON_INSTALL:
 	case ON_LOAD:
 	case ON_LOAD_RUNTIME:
 		{
-			instance = new Plugin();
-			return instance->onLoad(core, state == ON_INSTALL, state == ON_INSTALL || state == ON_LOAD_RUNTIME) ? True : False;
+			if(instance || !core || core->apiVersion != DCAPI_CORE_VER) return False;
+			try {
+				instance = new Plugin();
+				if(instance->onLoad(core, state == ON_INSTALL, state != ON_LOAD)) return True;
+			} catch(...) { }
+			delete instance;
+			instance = nullptr;
+			return False;
 		}
 	case ON_UNINSTALL:
 	case ON_UNLOAD:
@@ -69,7 +75,8 @@ Bool DCAPI Plugin::main(PluginState state, DCCorePtr core, dcptr_t) {
 		}
 	case ON_CONFIGURE: 
 		{
-			instance->dialog.create();
+			if(!instance) return False;
+			instance->dialog.create(static_cast<HWND>(parent));
 			return True;
 		}
 	default:
@@ -104,9 +111,13 @@ bool Plugin::onLoad(DCCorePtr core, bool install, bool runtime) {
 		return false;
 	}
 
-	if(install) {
+	// Older installations may not have both settings yet.
+	if(Config::getConfig("WAFormat").empty())
 		Config::setConfig("WAFormat", "NP > %[title] [ %[elapsed] of %[length] ]");
+	if(Config::getConfig("MPCFormat").empty())
 		Config::setConfig("MPCFormat", "NP > %[title]");
+
+	if(install) {
 
 		Logger::log("The MediaPlayer plugin has been installed; check the \"" + commandName + "\" command.");
 	}
@@ -159,7 +170,7 @@ bool Plugin::onChatCommandPM(UserDataPtr user, CommandDataPtr cmd) {
 			}
 			Hubs::handle()->send_private_message(user, result.c_str(), thirdPerson);
 		} else {
-			return false; // Will let it be for now until a better solution comes up
+			UI::handle()->notify("Media player", result.c_str());
 		}
 		return true;
 	} else {
@@ -168,6 +179,8 @@ bool Plugin::onChatCommandPM(UserDataPtr user, CommandDataPtr cmd) {
 }
 
 bool Plugin::parseCommand(const char* cmd, const char* param, string& result, bool& status) {
+	if(!cmd) return false;
+	if(!param) param = "";
 	if(stricmp(cmd, "help") == 0) {
 		if(stricmp(param, "plugins") == 0) {
 			result =
