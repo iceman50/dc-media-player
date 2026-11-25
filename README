@@ -1,7 +1,7 @@
 Media player plugin for DC++ Experimental
 ========================================
 
-Version 0.5 targets the Windows API 8 plugin interface used by
+Version 0.6 targets the Windows API 8 plugin interface used by
 DCPlusPlus-No-MDI 0.8842. The plugin stays in its own repository; no DC++
 source changes are required. The bundled legacy SDK is ABI-compatible with
 the interfaces used here; the integration test compiles against the actual
@@ -18,7 +18,7 @@ Put CMake 3.25+, g++, windres and mingw32-make on PATH, then run here:
 
 Outputs:
     build/mingw-release/MediaPlayer-x64.dll
-    build/mingw-release/MediaPlayer-0.5-x64-Release.dcext
+    build/mingw-release/MediaPlayer-0.6-x64-Release.dcext
 
 The package includes info.xml, the DLL, and MediaPlayer.ico. It contains
 only the selected architecture, with no missing PDB references. The MinGW
@@ -37,12 +37,14 @@ select the .dcext above. Accept the package installation dialog. If an older
 copy of this plugin is installed, disable it and restart DC++ before updating.
 The existing plugin GUID and saved formats are retained.
 
-Use the "Configure media broadcasts" plugin command to edit the Winamp
-format. An empty format restores the default. Supported commands in hub
+Use the "Configure media broadcasts" plugin command to edit the Winamp and
+foobar2000 formats. An empty format restores the default. Supported commands in hub
 chat and private messages:
 
     /w, /wa, /winamp     Broadcast Winamp's current title and playback info.
     /mpc                Broadcast the Media Player Classic window title.
+    /fb, /foobar, /foobar2000
+                        Broadcast the track shown in foobar2000's window title.
     /help plugins       Display this plugin's command help.
 
 Winamp must expose the "Winamp v1.x" window class; MPC must expose
@@ -50,6 +52,16 @@ Winamp must expose the "Winamp v1.x" window class; MPC must expose
 players are not supported. The format can start with "/me " for an action
 message. Winamp placeholders are listed in the configuration dialog's Help.
 MPC uses its stored MPCFormat setting, defaulting to "NP > %[title]".
+
+foobar2000 has no Winamp-style remote control interface, so the plugin reads
+its main window title. It looks for the Default UI and Columns UI window
+classes first, then for any top-level foobar2000.exe window whose title
+contains "foobar2000". The trailing " [foobar2000]" (or " - foobar2000")
+marker is removed to give %[title]; %[rawtitle] is the unmodified title and
+%[version] is the version, if the title includes it. What %[title] contains
+is set in foobar2000 under Preferences > Display > Default User Interface >
+Window title, for example "%artist% - %title%". The FBFormat setting
+defaults to "NP > %[title]". A stopped foobar2000 is reported locally.
 Missing-player errors stay local, with a notification in private chat.
 
 Compatibility changes
@@ -70,11 +82,12 @@ and provides local substitutes for the used host interfaces and player
 windows. It checks the exported entry point, metadata, rejected loads,
 load/install/unload/reload, hook/menu cleanup, hub/PM commands, /me, absent
 players, Unicode and long titles, format persistence, dialog ownership,
-and dialog closure during unload. No network traffic is sent. Close Winamp
-and MPC before running it; the test refuses to use live player windows.
+and dialog closure during unload. No network traffic is sent. Close Winamp,
+MPC and foobar2000 before running it; the test refuses to use live player
+windows.
 
 Validated against DC++ Experimental 0.8842 (checkout 270b0a5), Windows x64,
-MinGW-w64 GCC 13.2.0. Real Winamp/MPC playback in a running DC++ session has
+MinGW-w64 GCC 13.2.0. Real Winamp/MPC/foobar2000 playback in a running DC++ session has
 not been manually tested. The package is built but is not automatically
 installed into a user's DC++ profile.
 

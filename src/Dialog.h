@@ -41,7 +41,8 @@ public:
 private:
 	enum helpType {
 		WINAMP,
-		MPC
+		MPC,
+		FOOBAR
 	};
 
 	void saveConfig();

@@ -72,6 +72,11 @@ void Dialog::saveConfig() {
 	} else {
 		Config::setConfig("WAFormat", waFormat);
 	}
+
+	TCHAR fbDest[2048] = {};
+	::GetDlgItemText(hwnd, IDC_FOOBARCFG, fbDest, static_cast<int>(sizeof(fbDest) / sizeof(*fbDest)));
+	const string fbFormat = Util::fromT(fbDest);
+	Config::setConfig("FBFormat", fbFormat.empty() ? "NP > %[title]" : fbFormat);
 }
 
 void Dialog::helpBox(helpType type) {
@@ -88,6 +93,10 @@ void Dialog::helpBox(helpType type) {
 	case MPC:
 		{
 			helpF(MediaPlayers::MPCHelp()); break;
+		}
+	case FOOBAR:
+		{
+			helpF(MediaPlayers::FoobarHelp()); break;
 		}
 	}
 	 
@@ -140,6 +149,8 @@ INT_PTR CALLBACK Dialog::DialogProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM)
 BOOL Dialog::init() {
 	::SendDlgItemMessage(hwnd, IDC_WINAMPCFG, EM_LIMITTEXT, 2047, 0);
 	::SetDlgItemText(hwnd, IDC_WINAMPCFG,  Util::toT(Config::getConfig("WAFormat")).c_str());
+	::SendDlgItemMessage(hwnd, IDC_FOOBARCFG, EM_LIMITTEXT, 2047, 0);
+	::SetDlgItemText(hwnd, IDC_FOOBARCFG, Util::toT(Config::getConfig("FBFormat")).c_str());
 
 	return TRUE;
 }
@@ -160,6 +171,11 @@ void Dialog::command(WPARAM wParam) {
 	case IDC_WAHELP:
 		{
 			helpBox(WINAMP);
+			break;
+		}
+	case IDC_FBHELP:
+		{
+			helpBox(FOOBAR);
 			break;
 		}
 	}

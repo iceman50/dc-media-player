@@ -32,7 +32,7 @@
 #define PLUGIN_DESC "Plugin for sending now playing info to chat"
 
 /* Version of the plugin (note: not API version) */
-#define PLUGIN_VERSION 0.5
+#define PLUGIN_VERSION 0.6
 
 /* Plugin website, set to "N/A" if none */
 #define PLUGIN_WEB "https://github.com/iceman50/dc-media-player"

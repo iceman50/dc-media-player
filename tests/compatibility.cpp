@@ -131,12 +131,34 @@ static HWND player(const wchar_t* className, const wchar_t* title) {
     check(window != nullptr, "create test player");
     return window;
 }
+static const wchar_t* const foobarClass = L"{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}";
+// The plugin also finds foobar2000 by process name, so refuse a live instance.
+static BOOL CALLBACK findLiveFoobar(HWND window, LPARAM found) {
+    DWORD pid = 0;
+    GetWindowThreadProcessId(window, &pid);
+    if(HANDLE process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid)) {
+        wchar_t path[MAX_PATH] = {};
+        DWORD size = MAX_PATH;
+        if(QueryFullProcessImageNameW(process, 0, path, &size)) {
+            const wchar_t* name = wcsrchr(path, L'\\');
+            if(!_wcsicmp(name ? name + 1 : path, L"foobar2000.exe")) *reinterpret_cast<bool*>(found) = true;
+        }
+        CloseHandle(process);
+    }
+    return TRUE;
+}
+static bool foobarRunning() {
+    bool found = FindWindowW(foobarClass, nullptr) || FindWindowW(L"{E7076D1C-A7BF-4f39-B771-BCBE88F2A2A8}", nullptr);
+    if(!found) EnumWindows(findLiveFoobar, reinterpret_cast<LPARAM>(&found));
+    return found;
+}
 static HWND dialog() { return FindWindowW(L"#32770", L"Media player plugin configuration"); }
 
 int main(int argc, char** argv) try {
     check(argc == 2, "DLL argument required");
     check(!FindWindowW(L"Winamp v1.x", nullptr) && !FindWindowW(L"MediaPlayerClassicW", nullptr),
         "Close Winamp and MPC before running the isolated compatibility test");
+    check(!foobarRunning(), "Close foobar2000 before running the isolated compatibility test");
     hooks.apiVersion = DCINTF_HOOKS_VER; hooks.bind_hook = bind; hooks.release_hook = releaseHook;
     config.apiVersion = DCINTF_CONFIG_VER; config.get_install_path = installPath;
     config.set_cfg = setConfig; config.get_cfg = getConfig; config.release = releaseConfig;
@@ -156,7 +178,7 @@ int main(int argc, char** argv) try {
     std::memset(&metadata, 0xff, sizeof(metadata));
     auto main = init(&metadata);
     check(main && metadata.apiVersion == DCAPI_CORE_VER, "API version");
-    check(metadata.version == 0.5 && metadata.numDependencies == 0 && !metadata.dependencies, "metadata initialized");
+    check(metadata.version == 0.6 && metadata.numDependencies == 0 && !metadata.dependencies, "metadata initialized");
     check(!init(nullptr), "null metadata rejected");
     check(!main(ON_LOAD, nullptr, nullptr), "null core rejected");
     core.apiVersion = 0;
@@ -190,17 +212,41 @@ int main(int argc, char** argv) try {
     check(invoke(true, "mpc") && sent == "NP > Movie.mkv", "MPC PM");
     DestroyWindow(mpc);
     check(invoke(true, "mpc") && notice == "MPC is not running", "missing MPC handled locally");
+    check(invoke(false, "fb") && local == "foobar2000 is not running", "missing foobar2000 stays local");
+    auto foobar = player(foobarClass, L"Artist - Song [foobar2000]");
+    check(invoke(false, "fb") && sent == "NP > Artist - Song", "foobar2000 default format");
+    SetWindowTextW(foobar, L"Artist - [Album #08] Song  [foobar2000]");
+    check(invoke(false, "fb") && sent == "NP > Artist - [Album #08] Song", "foobar2000 double-spaced suffix trimmed");
+    settings["FBFormat"] = "/me %[title] (%[version])";
+    SetWindowTextW(foobar, L"\u97f3\u697d [foobar2000 v1.6.16]");
+    check(invoke(true, "FOOBAR") && sent == "\xe9\x9f\xb3\xe6\xa5\xbd (v1.6.16)" && action == True,
+        "foobar2000 PM action, Unicode title and version");
+    settings["FBFormat"] = "%[title]";
+    SetWindowTextW(foobar, L"[Album #01] Song - foobar2000");
+    check(invoke(false, "foobar2000") && sent == "[Album #01] Song", "foobar2000 dash suffix and brackets kept");
+    settings["FBFormat"] = "%[rawtitle]";
+    check(invoke(false, "fb") && sent == "[Album #01] Song - foobar2000", "foobar2000 raw title");
+    SetWindowTextW(foobar, L"foobar2000 v2.1.5");
+    local.clear();
+    check(invoke(false, "fb") && local == "foobar2000 is not playing anything", "stopped foobar2000 stays local");
+    SetWindowTextW(foobar, std::wstring(3000, L'a').c_str());
+    check(invoke(false, "fb") && sent.size() == 2047, "bounded foobar2000 title");
+    DestroyWindow(foobar);
+    check(invoke(true, "fb") && notice == "foobar2000 is not running", "missing foobar2000 PM handled locally");
     auto owner = CreateWindowW(L"STATIC", L"Test owner", WS_OVERLAPPED, 0, 0, 0, 0, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
     check(main(ON_CONFIGURE, &core, owner), "configure");
     auto window = dialog(); check(window != nullptr, "configuration window created");
     ShowWindow(window, SW_HIDE);
     check(GetWindow(window, GW_OWNER) == owner, "configuration owned by DC++ window");
     check(SendDlgItemMessage(window, 1001, EM_GETLIMITTEXT, 0, 0) == 2047, "edit length limit");
+    check(SendDlgItemMessage(window, 1004, EM_GETLIMITTEXT, 0, 0) == 2047, "foobar2000 edit length limit");
     check(main(ON_CONFIGURE, &core, owner) && dialog() == window, "repeat configure reuses window");
     ShowWindow(window, SW_HIDE);
     SetDlgItemTextW(window, 1001, L"%[title]");
+    SetDlgItemTextW(window, 1004, L"");
     SendMessage(window, WM_COMMAND, IDOK, 0);
     check(settings["WAFormat"] == "%[title]" && !IsWindow(window), "short format saved and dialog destroyed");
+    check(settings["FBFormat"] == "NP > %[title]", "empty foobar2000 format restores default");
     check(main(ON_CONFIGURE, &core, owner), "reopen dialog");
     window = dialog(); ShowWindow(window, SW_HIDE);
     SendMessage(window, WM_CLOSE, 0, 0);
@@ -217,7 +263,7 @@ int main(int argc, char** argv) try {
     check(main(ON_UNLOAD, nullptr, nullptr), "final unload");
     DestroyWindow(owner);
     check(FreeLibrary(library), "FreeLibrary");
-    std::cout << "PASS: DC++ API " << DCAPI_CORE_VER << " DLL lifecycle, hub/PM commands, Unicode, formats, dialog ownership and cleanup\n";
+    std::cout << "PASS: DC++ API " << DCAPI_CORE_VER << " DLL lifecycle, hub/PM commands (Winamp, MPC, foobar2000), Unicode, formats, dialog ownership and cleanup\n";
     return 0;
 } catch(const std::exception& error) {
     std::cerr << "FAIL: " << error.what() << '\n';

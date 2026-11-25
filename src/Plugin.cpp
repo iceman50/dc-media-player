@@ -116,6 +116,8 @@ bool Plugin::onLoad(DCCorePtr core, bool install, bool runtime) {
 		Config::setConfig("WAFormat", "NP > %[title] [ %[elapsed] of %[length] ]");
 	if(Config::getConfig("MPCFormat").empty())
 		Config::setConfig("MPCFormat", "NP > %[title]");
+	if(Config::getConfig("FBFormat").empty())
+		Config::setConfig("FBFormat", "NP > %[title]");
 
 	if(install) {
 
@@ -196,6 +198,9 @@ bool Plugin::parseCommand(const char* cmd, const char* param, string& result, bo
 		return true;
 	} else if ((stricmp(cmd, "mpc") == 0)) {
 		result = MediaPlayers::getMPCSpam(status);
+		return true;
+	} else if((stricmp(cmd, "fb") == 0) || (stricmp(cmd, "foobar") == 0) || (stricmp(cmd, "foobar2000") == 0)) {
+		result = MediaPlayers::getFoobarSpam(status);
 		return true;
 	}
 	return false;

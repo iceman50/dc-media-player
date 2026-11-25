@@ -159,6 +159,116 @@ string MediaPlayers::getMPCSpam(bool& status) {
 	return result;
 }
 
+namespace {
+
+// foobar2000 has no Winamp-style IPC, so its main window title is the source.
+// These are the main window classes of the Default UI and Columns UI.
+const TCHAR* const foobarClasses[] = {
+	_T("{97E27FAA-C0B3-4b8e-A693-ED7881E99FC1}"),
+	_T("{E7076D1C-A7BF-4f39-B771-BCBE88F2A2A8}")
+};
+
+bool isFoobarProcess(HWND hwnd) {
+	DWORD pid = 0;
+	::GetWindowThreadProcessId(hwnd, &pid);
+	if(!pid) return false;
+	HANDLE process = ::OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+	if(!process) return false;
+	TCHAR path[MAX_PATH] = {};
+	DWORD size = MAX_PATH;
+	const bool ok = ::QueryFullProcessImageName(process, 0, path, &size) != 0;
+	::CloseHandle(process);
+	if(!ok) return false;
+	const TCHAR* name = _tcsrchr(path, _T('\\'));
+	return _tcsicmp(name ? name + 1 : path, _T("foobar2000.exe")) == 0;
+}
+
+// Other UI components use their own window classes; accept an unowned
+// top-level window of foobar2000.exe whose title carries its name.
+BOOL CALLBACK findFoobarWindow(HWND hwnd, LPARAM lParam) {
+	if(::GetWindow(hwnd, GW_OWNER)) return TRUE;
+	TCHAR title[256] = {};
+	::GetWindowText(hwnd, title, 256);
+	if(!_tcsstr(title, _T("foobar2000")) || !isFoobarProcess(hwnd)) return TRUE;
+	*reinterpret_cast<HWND*>(lParam) = hwnd;
+	return FALSE;
+}
+
+HWND findFoobar() {
+	for(auto cls : foobarClasses) {
+		if(HWND hwnd = ::FindWindow(cls, NULL)) return hwnd;
+	}
+	HWND hwnd = nullptr;
+	::EnumWindows(findFoobarWindow, reinterpret_cast<LPARAM>(&hwnd));
+	return hwnd;
+}
+
+} // namespace
+
+// foobar2000 appends " [foobar2000]" (or " [foobar2000 vX.Y]") to the
+// configured window title while playing; when stopped the title is just
+// "foobar2000" with an optional version.
+string MediaPlayers::getFoobarSpam(bool& status) {
+	const HWND hwnd = findFoobar();
+	if(!hwnd) {
+		status = true;
+		return "foobar2000 is not running";
+	}
+
+	TCHAR titleBuffer[2048] = {};
+	::GetWindowText(hwnd, titleBuffer, static_cast<int>(sizeof(titleBuffer) / sizeof(*titleBuffer)));
+	const string rawTitle = Util::fromT(titleBuffer);
+	string title = rawTitle, version;
+
+	auto takeVersion = [&version](const string& rest) {
+		const auto start = rest.find_first_not_of(' ');
+		if(start != string::npos) version = rest.substr(start);
+	};
+
+	const string name = "foobar2000";
+	const auto bracket = title.rfind(" [" + name);
+	const auto dash = title.rfind(" - " + name);
+	if(title.compare(0, name.size(), name) == 0) {
+		// Stopped: "foobar2000" or "foobar2000 v2.1.5".
+		takeVersion(title.substr(name.size()));
+		title.clear();
+	} else if(bracket != string::npos && !title.empty() && title.back() == ']') {
+		takeVersion(title.substr(bracket + 2 + name.size(), title.size() - bracket - 3 - name.size()));
+		title.erase(bracket);
+	} else if(dash != string::npos) {
+		takeVersion(title.substr(dash + 3 + name.size()));
+		title.erase(dash);
+	}
+
+	// foobar2000 puts two spaces before " [foobar2000]".
+	const auto last = title.find_last_not_of(' ');
+	title.erase(last == string::npos ? 0 : last + 1);
+	if(title.empty()) {
+		status = true;
+		return "foobar2000 is not playing anything";
+	}
+
+	StringMap params;
+	params["title"] = title;
+	params["rawtitle"] = rawTitle;
+	params["version"] = version;
+	return MediaUtil::formatParams(Config::getConfig("FBFormat"), params);
+}
+
+const string MediaPlayers::FoobarHelp() {
+	const string buf =
+		"foobar2000 media broadcast\r\n"
+		"- %[title]		Track as shown in foobar2000's window title\r\n"
+		"- %[rawtitle]	Unmodified foobar2000 window title\r\n"
+		"- %[version]	foobar2000 version, when the window title shows it\r\n"
+		"\r\n"
+		"%[title] follows foobar2000's window title format, set in\r\n"
+		"Preferences > Display > Default User Interface > Window title.\r\n"
+		"Example: %artist% - %title%\r\n"
+		"Empty = Default String -> NP > %[title]";
+	return buf;
+}
+
 const string MediaPlayers::WAHelp() {
 	const string buf =
 		"Winamp media broadcast\r\n"

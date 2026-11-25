@@ -51,8 +51,8 @@ END
 //
 
 VERSION_INFO VERSIONINFO
- FILEVERSION 0,0,5,0
- PRODUCTVERSION 0,0,5,0
+ FILEVERSION 0,0,6,0
+ PRODUCTVERSION 0,0,6,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "http://dcplusplus.sourceforge.net"
             VALUE "FileDescription", "Media player plugin for DC++"
-            VALUE "FileVersion", "0, 0, 5, 0"
+            VALUE "FileVersion", "0, 0, 6, 0"
             VALUE "InternalName", "MediaPlayer plugin"
             VALUE "LegalCopyright", "Copyright (C) 2013-2026 iceman50"
             VALUE "OriginalFilename", "MediaPlayer.dll"
             VALUE "ProductName", "Media player plugin for DC++"
-            VALUE "ProductVersion", "0, 0, 5, 0"
+            VALUE "ProductVersion", "0, 0, 6, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -89,16 +89,19 @@ END
 // Dialog
 //
 
-IDD_MEDIAPLAYERDLG DIALOGEX 0, 0, 243, 70
+IDD_MEDIAPLAYERDLG DIALOGEX 0, 0, 243, 112
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Media player plugin configuration"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,133,49,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,188,49,48,14
-    EDITTEXT        IDC_WINAMPCFG,7,29,190,15,ES_AUTOHSCROLL
     CTEXT           "Winamp message format",IDC_WASTATIC,7,7,229,11
-    PUSHBUTTON      "Help",IDC_WAHELP,197,29,39,15
+    EDITTEXT        IDC_WINAMPCFG,7,22,190,15,ES_AUTOHSCROLL
+    PUSHBUTTON      "Help",IDC_WAHELP,197,22,39,15
+    CTEXT           "foobar2000 message format",IDC_FBSTATIC,7,46,229,11
+    EDITTEXT        IDC_FOOBARCFG,7,61,190,15,ES_AUTOHSCROLL
+    PUSHBUTTON      "Help",IDC_FBHELP,197,61,39,15
+    DEFPUSHBUTTON   "OK",IDOK,133,91,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,188,91,48,14
 END
 
 
@@ -116,9 +119,7 @@ BEGIN
         RIGHTMARGIN, 236
         VERTGUIDE, 197
         TOPMARGIN, 7
-        BOTTOMMARGIN, 63
-        HORZGUIDE, 36
-        HORZGUIDE, 69
+        BOTTOMMARGIN, 105
     END
 END
 #endif    // APSTUDIO_INVOKED

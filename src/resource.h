@@ -7,6 +7,9 @@
 #define IDC_WAHELP				        1000
 #define IDC_WINAMPCFG                   1001
 #define IDC_WASTATIC                    1002
+#define IDC_FBSTATIC                    1003
+#define IDC_FOOBARCFG                   1004
+#define IDC_FBHELP                      1005
 
 // Next default values for new objects
 // 

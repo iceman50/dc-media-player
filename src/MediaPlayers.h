@@ -27,8 +27,10 @@ public:
 
 	static string getWinampSpam(bool& status);
 	static string getMPCSpam(bool& status);
+	static string getFoobarSpam(bool& status);
 	static const string WAHelp();
 	static const string MPCHelp();
+	static const string FoobarHelp();
 
 private:
 
